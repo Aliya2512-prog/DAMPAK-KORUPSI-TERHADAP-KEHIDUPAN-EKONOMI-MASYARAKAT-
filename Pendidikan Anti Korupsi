@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel Saya</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Artikel Saya</h1>
+    <button id="toggleForm">Tulis Artikel</button>
+  </header>
+
+  <section id="formSection" style="display: none;">
+    <h2>Tulis Artikel Baru</h2>
+    <form id="articleForm">
+      <input type="text" id="title" placeholder="Judul Artikel" required />
+      <textarea id="content" placeholder="Isi artikel..." required></textarea>
+      <button type="submit">Publikasikan</button>
+    </form>
+  </section>
+
+  <main id="articlesContainer">
+    <!-- Artikel akan ditampilkan di sini -->
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #0066cc;
+  color: white;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#formSection, main {
+  padding: 1em;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+input, textarea {
+  padding: 0.5em;
+  font-size: 1em;
+}
+
+article {
+  border: 1px solid #ccc;
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
+button {
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+const form = document.getElementById('articleForm');
+const articlesContainer = document.getElementById('articlesContainer');
+const toggleFormBtn = document.getElementById('toggleForm');
+const formSection = document.getElementById('formSection');
+
+toggleFormBtn.onclick = () => {
+  formSection.style.display = formSection.style.display === 'none' ? 'block' : 'none';
+};
+
+function loadArticles() {
+  const articles = JSON.parse(localStorage.getItem('articles')) || [];
+  articlesContainer.innerHTML = '';
+  articles.forEach((article, index) => {
+    const articleEl = document.createElement('article');
+    articleEl.innerHTML = `<h3>${article.title}</h3><p>${article.content}</p>`;
+    articlesContainer.appendChild(articleEl);
+  });
+}
+
+form.onsubmit = function (e) {
+  e.preventDefault();
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+  const articles = JSON.parse(localStorage.getItem('articles')) || [];
+  articles.unshift({ title, content });
+  localStorage.setItem('articles', JSON.stringify(articles));
+  form.reset();
+  loadArticles();
+};
+
+loadArticles();
